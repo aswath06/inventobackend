@@ -1,11 +1,17 @@
 {
   "development": {
-    "username": "root",
-    "password": "",
-    "database": "invento",
-    "host": "127.0.0.1",
+    "username": "invento_nig7_user",
+    "password": "qrvQNk7Kgob42uW0HWTLygd0JJCCslgM",
+    "database": "invento_nig7",
+    "host": "dpg-d46dmjm3jp1c73fca0c0-a.oregon-postgres.render.com",
     "port": 5432,
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    }
   },
   "test": {
     "username": "root",
