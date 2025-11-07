@@ -1,38 +1,21 @@
-require('dotenv').config(); // Load .env at the very top
+require('dotenv').config(); 
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Sequelize } = require('sequelize');
-const routes = require('./routes'); // your routes/index.js
+const routes = require('./routes'); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0';
 
-// ---------- Middleware ----------
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// ---------- Routes ----------
 app.use('/api', routes);
 
-// ---------- Root endpoint ----------
 app.get('/', (req, res) => {
-  res.json({ message: '✅ Inventory API running successfully' });
+  res.json({ message: 'Inventory API running successfully' });
 });
-
-// ---------- Log environment variables ----------
-console.log('---- DB ENV VARIABLES ----');
-console.log('DEV_DB_HOST:', process.env.DEV_DB_HOST);
-console.log('DEV_DB_NAME:', process.env.DEV_DB_NAME);
-console.log('DEV_DB_USERNAME:', process.env.DEV_DB_USERNAME);
-console.log('DEV_DB_PASSWORD:', process.env.DEV_DB_PASSWORD ? '******' : undefined);
-console.log('DEV_DB_PORT:', process.env.DEV_DB_PORT);
-console.log('DEV_DB_DIALECT:', process.env.DEV_DB_DIALECT);
-console.log('DEV_DB_SSL_REQUIRE:', process.env.DEV_DB_SSL_REQUIRE);
-console.log('DEV_DB_SSL_REJECT_UNAUTHORIZED:', process.env.DEV_DB_SSL_REJECT_UNAUTHORIZED);
-console.log('---------------------------');
-
-// ---------- Sequelize setup ----------
 const sequelize = new Sequelize(
   process.env.DEV_DB_NAME,
   process.env.DEV_DB_USERNAME,
@@ -47,23 +30,20 @@ const sequelize = new Sequelize(
         rejectUnauthorized: process.env.DEV_DB_SSL_REJECT_UNAUTHORIZED === 'true',
       },
     },
-    logging: false, // Disable SQL logs
+    logging: false,
   }
 );
 
-// ---------- Start server ----------
 async function start() {
   try {
     await sequelize.authenticate();
-    console.log('✅ Database connection established successfully.');
+    console.log('Database connection established successfully.');
 
     app.listen(PORT, HOST, () => {
-      console.log(`🚀 Server running on:`);
-      console.log(`   Local:   http://localhost:${PORT}`);
-      console.log(`   Network: http://${HOST}:${PORT}`);
+      console.log(`Server running on:`);
     });
   } catch (err) {
-    console.error('❌ Unable to connect to the database:', err);
+    console.error('Unable to connect to the database:', err);
     process.exit(1);
   }
 }
