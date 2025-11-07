@@ -1,35 +1,37 @@
 require('dotenv').config();
 const express = require('express');
-const { Sequelize } = require('sequelize');
+const bodyParser = require('body-parser');
+const routes = require('./routes');
+const { sequelize } = require('./models');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = '0.0.0.0';
 
-const sequelize = new Sequelize(
-  process.env.DEV_DB_NAME,
-  process.env.DEV_DB_USERNAME,
-  process.env.DEV_DB_PASSWORD,
-  {
-    host: process.env.DEV_DB_HOST,
-    dialect: process.env.DEV_DB_DIALECT,
-    port: process.env.DEV_DB_PORT,
-    dialectOptions: {
-      ssl: {
-        require: process.env.DEV_DB_SSL_REQUIRE === 'true',
-        rejectUnauthorized: process.env.DEV_DB_SSL_REJECT_UNAUTHORIZED === 'true'
-      }
-    }
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Mount routes under /api
+app.use('/api', routes);
+
+// Root route
+app.get('/', (req, res) => res.json({ message: '✅ Inventory API running successfully' }));
+
+// Start server with database connection
+async function start() {
+  try {
+    await sequelize.authenticate();
+    console.log('✅ Database connection established successfully.');
+
+    app.listen(PORT, HOST, () => {
+      console.log(`🚀 Server running on:`);
+      console.log(`   Local:   http://localhost:${PORT}`);
+      console.log(`   Network: http://0.0.0.0:${PORT}`);
+    });
+  } catch (err) {
+    console.error('❌ Unable to connect to the database:', err);
+    process.exit(1);
   }
-);
+}
 
-sequelize.authenticate()
-  .then(() => console.log('Database connected successfully.'))
-  .catch(err => console.error('Unable to connect to the database:', err));
-
-app.use(express.json());
-
-app.get('/', (req, res) => {
-  res.send('Server is running!');
-});
-
-app.listen(PORT, () => console.log(`🚀 Server listening on port ${PORT}`));
+start();
