@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config(); // Load .env at the very top
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Sequelize } = require('sequelize');
@@ -8,40 +8,50 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0';
 
-// Middleware
+// ---------- Middleware ----------
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Routes
+// ---------- Routes ----------
 app.use('/api', routes);
 
-// Root endpoint
+// ---------- Root endpoint ----------
 app.get('/', (req, res) => {
   res.json({ message: '✅ Inventory API running successfully' });
 });
 
-// Sequelize setup using DEV database (Render)
+// ---------- Log environment variables ----------
+console.log('---- DB ENV VARIABLES ----');
+console.log('DEV_DB_HOST:', process.env.DEV_DB_HOST);
+console.log('DEV_DB_NAME:', process.env.DEV_DB_NAME);
+console.log('DEV_DB_USERNAME:', process.env.DEV_DB_USERNAME);
+console.log('DEV_DB_PASSWORD:', process.env.DEV_DB_PASSWORD ? '******' : undefined);
+console.log('DEV_DB_PORT:', process.env.DEV_DB_PORT);
+console.log('DEV_DB_DIALECT:', process.env.DEV_DB_DIALECT);
+console.log('DEV_DB_SSL_REQUIRE:', process.env.DEV_DB_SSL_REQUIRE);
+console.log('DEV_DB_SSL_REJECT_UNAUTHORIZED:', process.env.DEV_DB_SSL_REJECT_UNAUTHORIZED);
+console.log('---------------------------');
+
+// ---------- Sequelize setup ----------
 const sequelize = new Sequelize(
   process.env.DEV_DB_NAME,
   process.env.DEV_DB_USERNAME,
   process.env.DEV_DB_PASSWORD,
   {
     host: process.env.DEV_DB_HOST,
-    dialect: process.env.DEV_DB_DIALECT,
-    port: process.env.DEV_DB_PORT,
+    dialect: process.env.DEV_DB_DIALECT || 'postgres',
+    port: process.env.DEV_DB_PORT || 5432,
     dialectOptions: {
       ssl: {
         require: process.env.DEV_DB_SSL_REQUIRE === 'true',
-        rejectUnauthorized: process.env.DEV_DB_SSL_REJECT_UNAUTHORIZED === 'true'
-          ? true
-          : false,
+        rejectUnauthorized: process.env.DEV_DB_SSL_REJECT_UNAUTHORIZED === 'true',
       },
     },
-    logging: false, // optional: disable SQL logs
+    logging: false, // Disable SQL logs
   }
 );
 
-// Start server
+// ---------- Start server ----------
 async function start() {
   try {
     await sequelize.authenticate();
