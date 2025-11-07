@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Sequelize } = require('sequelize');
-const routes = require('./routes'); // This should import your routes/index.js
+const routes = require('./routes'); // your routes/index.js
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
   res.json({ message: '✅ Inventory API running successfully' });
 });
 
-// Sequelize database connection
+// Sequelize setup using DEV database (Render)
 const sequelize = new Sequelize(
   process.env.DEV_DB_NAME,
   process.env.DEV_DB_USERNAME,
@@ -32,10 +32,12 @@ const sequelize = new Sequelize(
     dialectOptions: {
       ssl: {
         require: process.env.DEV_DB_SSL_REQUIRE === 'true',
-        rejectUnauthorized: process.env.DEV_DB_SSL_REJECT_UNAUTHORIZED === 'true',
+        rejectUnauthorized: process.env.DEV_DB_SSL_REJECT_UNAUTHORIZED === 'true'
+          ? true
+          : false,
       },
     },
-    logging: false, // optional: disables SQL query logs
+    logging: false, // optional: disable SQL logs
   }
 );
 
