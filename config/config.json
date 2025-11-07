@@ -20,11 +20,19 @@
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
-  "production": {
-    "username": "root",
-    "password": "",
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
+"production": {
+  "username": "invento_nig7_user",
+  "password": "qrvQNk7Kgob42uW0HWTLygd0JJCCslgM",
+  "database": "invento_nig7",
+  "host": "dpg-d46dmjm3jp1c73fca0c0-a.oregon-postgres.render.com",
+  "port": 5432,
+  "dialect": "postgres",
+  "dialectOptions": {
+    "ssl": {
+      "require": true,
+      "rejectUnauthorized": false
+    }
   }
+}
+
 }
